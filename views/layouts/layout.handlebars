@@ -49,23 +49,37 @@
             <div class="container">
                 <ul>
                     <li><a href="/">HOME</a></li>
+                    {{#if user}}
+                    <li><a href="{{type}}/dashboard">DASHBOARD</a></li>
+                    <li class="pull-right"><a href="/logout">LOGOUT</a></li>
+                    {{else}}
                     <li><a href="/dean">COLLEGE LOGIN (Dean Academics)</a></li>
                     <li><a href="/hod">HODs LOGIN</a></li>
                     <li><a href="/faculty">FACULTY LOGIN</a></li>
-                    <li><a href="#">ADMIN LOGIN</a></li>
-                    <li><a href="#">DASHBOARD</a></li>
-                    <li class="pull-right"><a href="#">LOGOUT</a></li>
+                    <li><a href="/admin">ADMIN LOGIN</a></li>
+                    {{/if}}
+                    
                 </ul>
             </div>
         </nav>
-        </ header>
+    </header>
+    <div class="body">
+        {{#if success_msg}}
+        <div class="alert alert-success" style="text-align:center;">{{success_msg}}</div>
+        {{/if}} {{#if error_msg}}
+        <div class="alert alert-danger" style="text-align:center;">{{error_msg}}</div>
+        {{/if}} {{#if error}}
+        <div class="alert alert-danger" style="text-align:center;">{{error}}</div>
+        {{/if}}
         {{{body}}}
+    </div>
 
-        <footer id="footer">
-            <div class="container">
-                <p>All rights reserved &copy; 2017, Uttarakhand Technical University. </p>
-            </div>
-        </footer>
+
+    <footer id="footer">
+        <div class="container">
+            <p>All rights reserved &copy; 2017, Uttarakhand Technical University. </p>
+        </div>
+    </footer>
 
 </body>
 <script>

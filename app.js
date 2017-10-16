@@ -17,8 +17,9 @@ const index = require(path.resolve(__dirname, 'routes/index')),
     dean = require(path.resolve(__dirname, 'routes/dean')),
     faculty = require(path.resolve(__dirname, 'routes/faculty')),
     hod = require(path.resolve(__dirname, 'routes/hod'));
-//mongoose.connect(process.env.MONGODB_URI_LOCAL);
-//let db = mongoose.connection;
+
+mongoose.connect(process.env.MONGODB_URI);
+let db = mongoose.connection;
 
 const favicon = require('serve-favicon')
 app.use(favicon(path.resolve(__dirname, 'public/img/utu-logo.png')));
@@ -66,7 +67,8 @@ app.use(function (req, res, next) {
     res.locals.success_msg = req.flash('success_msg')
     res.locals.error_msg = req.flash('error_msg')
     res.locals.error = req.flash('error')
-    res.locals.user = req.user || null;
+    res.locals.user  = req.session.user || null
+    res.locals.type = req.session.type || null
     next();
 });
 
@@ -74,6 +76,15 @@ app.use('/', index)
 app.use('/dean', dean)
 app.use('/hod', hod)
 app.use('/faculty', faculty)
+
+app.get('/logout',(req,res)=>{
+    let dest = req.session.type
+    req.session.user=null
+    req.session.username=null
+    req.session.type = null
+    req.flash('success_msg','Successully Logged out')
+    res.redirect(dest)
+})
 
 
 app.listen(PORT, err => {

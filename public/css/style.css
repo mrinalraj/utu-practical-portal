@@ -125,7 +125,8 @@ footer p{
 .body-reg h2{
     margin-bottom: 40px; 
 }
-.body-login .container{
-    width: 50%;
+.body .container .well{
+    margin: 0 auto;
+    max-width: 500px;
 }
 
