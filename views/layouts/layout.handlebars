@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,600' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' />
+
+    <link rel="stylesheet" type="text/css" href="{{path}}css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{path}}css/style.css">
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1"
+        crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{path}}js/particles.min.js"></script>
+
+    <title>{{title}}</title>
+
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <div class="misc">
+            <div class="container-fluid">
+                <p class="pull-right">Contact Admin : <a href="mailto:me@mrinalraj.com">me@mrinalraj.com</a></p>
+            </div>
+        </div>
+
+        <div class="banner">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-1">
+                        <img src="{{path}}/img/utu-logo.png" height="80px" width="80px">
+                    </div>
+                    <div class="col-xs-11">
+                        <h2>Uttarakhand Technical University</h2>
+                        <h4>Practical Examination Portal</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="">
+            <div class="container">
+                <ul>
+                    <li><a href="/">HOME</a></li>
+                    <li><a href="/dean">COLLEGE LOGIN (Dean Academics)</a></li>
+                    <li><a href="/hod">HODs LOGIN</a></li>
+                    <li><a href="/faculty">FACULTY LOGIN</a></li>
+                    <li><a href="#">ADMIN LOGIN</a></li>
+                    <li><a href="#">DASHBOARD</a></li>
+                    <li class="pull-right"><a href="#">LOGOUT</a></li>
+                </ul>
+            </div>
+        </nav>
+        </ header>
+        {{{body}}}
+
+        <footer id="footer">
+            <div class="container">
+                <p>All rights reserved &copy; 2017, Uttarakhand Technical University. </p>
+            </div>
+        </footer>
+
+</body>
+<script>
+    let body_height = document.body.scrollHeight,
+        window_height = $(window).height(),
+        footer_height = $('footer').height();
+    console.log(body_height)
+    console.log(window_height)
+    console.log(footer_height)
+
+    if ((body_height - window_height) < 0) {
+        $('footer').css({ "position": "fixed", "bottom": "0" })
+    }
+
+</script>
+
+</html>

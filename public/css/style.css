@@ -1,0 +1,131 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+aside {
+  margin: 0;
+  padding: 0;
+}
+body{
+    font-family: 'Source Sans Pro';
+}
+header .misc{
+    background-color: #FA7777;
+    width: 100%;
+    height: 25px;
+}
+header .misc p{
+    line-height: 25px;
+    font-weight: 400;
+    font-size: 12px;
+    color: white;
+}
+
+header .misc a{
+    text-decoration: none;
+    color: white;
+}
+
+header .banner{
+    width: 100%;
+    background-color: #fb5757;
+}
+
+header .banner .container{
+    color: white
+}
+
+header .banner .container .row .col-xs-1 img{
+    margin: 15px;
+}
+
+header .banner .container .row .col-xs-11 h2{
+    margin: 18px 0 5px 10px;
+    font-weight: 700;
+}
+
+header .banner .container .row .col-xs-11 h4{
+    margin: 0 0 5px 10px;
+}
+
+header nav{
+    background: #d43961;
+}
+
+header nav ul{
+    margin: 0;
+    list-style: none;
+}
+
+header nav ul li{
+    padding: 4px 20px 4px 15px;
+    display: inline-block;
+}
+
+header nav ul li:hover{
+    background: #AA1D43;
+}
+
+header nav ul li a{
+    line-height: 30px;
+    font-size: 14px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+header nav ul li a:hover{
+    text-decoration: none;
+    color: white;
+}
+
+header nav ul li a:active{
+    text-decoration: none;
+    color: white;
+}
+
+footer{
+    width: 100%;
+    background: #fb5757;
+}
+
+footer p{
+    margin: 0;
+    color: #F8B7B7;
+    font-size: 12px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.body-landing{
+    background-color: #fff;
+}
+
+.body-landing .container h2{
+    margin: 30px 0;
+    font-weight: 600;
+    line-height: 50px;
+}
+
+.body-landing .container ul.courses{
+    margin-left:40px;
+    margin-bottom: 30px;
+}
+.body-login{
+    margin: 80px 0; 
+}
+
+.body-reg{
+    margin: 30px 0;
+}
+.body-reg h2{
+    margin-bottom: 40px; 
+}
+.body-login .container{
+    width: 50%;
+}
+

@@ -1,0 +1,69 @@
+<div class="body-reg">
+    <div class="container">
+        <h2 class="page-header">{{intrested}} Registration</h2>
+        {{#if errors}} {{#with errors.[0]}}
+        <div class="alert alert-danger">{{msg}}</div>
+        {{/with}} {{/if}}
+        <form method="post" action="/users/register">
+            <div class="form-group">
+                <label>College Name</label>
+                <input type="text" class="form-control" placeholder="College Name" name="clgname" value={{clgname}}>
+            </div>
+            <div class="form-group">
+                <label>College Code</label>
+                <input type="text" class="form-control" placeholder="College Code" name="clgcode" value={{clgcode}}>
+            </div>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" placeholder="Full Name" name="name" value={{name}}>
+            </div>
+            {{#if branchreq}}
+            <div class="form-group">
+                <label>Branch</label>
+                <input type="text" class="form-control" placeholder="Branch" name="branch" value={{branch}}>
+            </div>
+            {{/if}}
+            {{#if desi}}
+            <div class="form-group">
+                <label>Desigation</label>
+                <input type="text" class="form-control" placeholder="Designation" name="des" value={{des}}>
+            </div>
+            {{/if}}
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" class="form-control" placeholder="Mobile Number" name="phone" value={{phone}}>
+            </div>
+            <div class="form-group">
+                <label>Official Email</label>
+                <input type="email" class="form-control" placeholder="Official Email" name="oemail" value={{oemail}}>
+            </div>
+            <div class="form-group">
+                <label>Personal Email</label>
+                <input type="email" class="form-control" placeholder="Personal Email" name="pemail" value={{pemail}}>
+            </div>
+            {{#if date}}
+            <div class="form-group">
+                <label>Date of joining as {{intrested}}</label>
+                <input type="text" class="form-control" placeholder="Date of joining" name="doj" value={{doj}}>
+            </div>
+            {{/if}}
+            <div class="form-group">
+                <label>Total overall experience</label>
+                <textarea rows="2" type="text" class="form-control" placeholder="Experience" name="exp" value={{exp}}></textarea>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="Password" name="password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" placeholder="Re-enter Password" name="password2">
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" class="" placeholder="Accept" name="accept"> &nbsp; I hereby accept that the information given by me are true to my knowledge and there are no false information provided.<br>Entering any invalid information will lead to the rejection of my application.</label>
+            </div>
+            <p></p>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</div>
