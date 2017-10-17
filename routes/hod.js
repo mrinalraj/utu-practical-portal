@@ -1,9 +1,8 @@
 let express = require('express'),
-    router = express.Router();
+    router = express.Router(),
+    model = require('../model/hod_model');
 
-router.get('/dashboard', (req, res) => {
 
-})
 
 router.get('/', (req, res) => {
     res.render('login', {
@@ -15,7 +14,40 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
+    if (req.body) {
+        let username = req.body.email,
+            password = req.body.pass;
 
+        model.getUserByUsername(username, function (err, user) {
+            if (err) throw err;
+            if (!user) {
+                req.flash('error_msg', 'User Not found');
+                res.redirect('/hod')
+            } else {
+                if (user.verified === true) {
+                    model.comparePassword(password, user.password, (err, ismatch) => {
+                        if (err) throw err;
+                        if (ismatch) {
+                            req.session.user = username
+                            req.session.username = user.full_name
+                            req.session.type = '/hod'
+                            req.flash('success_msg', 'logged in as ' + req.session.username)
+                            res.redirect('/hod/dashboard')
+                        } else {
+                            req.flash('error_msg', 'invalid password')
+                            res.redirect('/hod?user=' + username)
+                        }
+                    })
+                } else {
+                    req.flash('error_msg', "User Login not verified. Please contact the concerned personnel.")
+                    res.redirect('/hod')
+                }
+
+            }
+        })
+    } else {
+        res.send('invalid data')
+    }
 })
 
 router.get('/register', (req, res) => {
@@ -120,6 +152,7 @@ router.post('/register', (req, res) => {
                 college_name: college_name,
                 college_code: college_code,
                 full_name: full_name,
+                branch:branch,
                 phone: phone,
                 pemail: email_personal,
                 oemail: email_official,
@@ -132,10 +165,14 @@ router.post('/register', (req, res) => {
             model.createUser(new_entry, (err, model) => {
                 if (err) throw err;
                 req.flash('success_msg', 'You are now registered, and can Log In once the admin has approved.')
-                res.redirect('/dean/')
+                res.redirect('/hod')
             })
         }
     }
+})
+
+router.get('/dashboard', (req, res) => {
+    res.send('logged in user is ' + req.session.username)
 })
 
 module.exports = router;

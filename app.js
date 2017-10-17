@@ -10,7 +10,8 @@ const express = require('express'),
     mongo = require('mongodb'),
     flash = require('connect-flash'),
     session = require('express-session'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    MongoStore=require('connect-mongo')(session);
 
 
 const index = require(path.resolve(__dirname, 'routes/index')),
@@ -18,7 +19,7 @@ const index = require(path.resolve(__dirname, 'routes/index')),
     faculty = require(path.resolve(__dirname, 'routes/faculty')),
     hod = require(path.resolve(__dirname, 'routes/hod'));
 
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_LOCAL_URI);
 let db = mongoose.connection;
 
 const favicon = require('serve-favicon')
@@ -59,7 +60,8 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         secure: false
-    }
+    },
+    store: new MongoStore({mongooseConnection:mongoose.connection})
 }))
 app.use(flash())
 
@@ -91,6 +93,7 @@ app.listen(PORT, err => {
     if (err) {
         console.log(err)
     } else {
-        console.log("server started at %d", PORT)
+        console.log("\nserver started at %d", PORT)
+        console.log('We are not connected, hooreey!')
     }
 })
