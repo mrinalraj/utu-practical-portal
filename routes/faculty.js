@@ -4,7 +4,7 @@ let express = require('express'),
 
 router.get('/', (req, res) => {
     if(req.session.user){
-        return res.redirect(req.session.type+'/dashboard')
+        return res.redirect('/'+req.session.type+'/dashboard')
     }
     res.render('login',{
         title :'Faculty Login',
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     if(req.session.user){
-        return res.redirect(req.session.type+'/dashboard')
+        return res.redirect('/'+req.session.type+'/dashboard')
     }
     if (req.body) {
         let username = req.body.email,
@@ -34,8 +34,8 @@ router.post('/', (req, res) => {
                         if (ismatch) {
                             req.session.user = username
                             req.session.username = user.full_name
-                            req.session.type = '/faculty'
-                            req.flash('success_msg', 'logged in as ' + req.session.username)
+                            req.session.type = 'Faculty'
+                            req.flash('success_msg', 'Welcome ' + req.session.username)
                             res.redirect('/faculty/dashboard')
                         } else {
                             req.flash('error_msg', 'invalid password')
@@ -56,7 +56,7 @@ router.post('/', (req, res) => {
 
 router.get('/register', (req, res) => {
     if(req.session.user){
-        return res.redirect(req.session.type+'/dashboard')
+        return res.redirect('/'+req.session.type+'/dashboard')
     }
     res.render('register', {
         title: 'Faculty Registration',
@@ -70,7 +70,7 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
     if(req.session.user){
-        return res.redirect(req.session.type+'/dashboard')
+        return res.redirect('/'+req.session.type+'/dashboard')
     }
     if (req.body) {
         let reqst = req.body
@@ -184,9 +184,17 @@ router.post('/register', (req, res) => {
 router.get('/dashboard', (req, res) => {
     if(!req.session.user){
         req.flash('error_msg','Please login in to acceess Dashboard.')
-        return res.redirect('/faculty')
+        return res.redirect('/admin')
     }
-    res.send('logged in user is ' + req.session.username)
+    res.render('dashboard', {
+        title: res.locals.type + ' Dashboard',
+        path: '../../',
+        helpers: {
+            ifcond: function (v1, v2, options) {
+                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+            }
+        }
+    })
 })
 
 

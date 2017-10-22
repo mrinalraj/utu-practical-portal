@@ -9,14 +9,13 @@
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,600' rel='stylesheet' type='text/css'>
     <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' />
 
-    <link rel="stylesheet" type="text/css" href="{{path}}css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{path}}css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{path}}stylesheets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{path}}stylesheets/css/style.min.css">
 
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1"
-        crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="{{path}}js/particles.min.js"></script>
+    <script src="{{path}}js/bootstrap.min.js"></script>
 
     <title>{{title}}</title>
 
@@ -35,7 +34,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-xs-1">
-                        <img src="{{path}}/img/utu-logo.png" height="80px" width="80px">
+                        <img src="{{path}}img/utu-logo.png" height="80px" width="80px">
                     </div>
                     <div class="col-xs-11">
                         <h2>Uttarakhand Technical University</h2>
@@ -49,8 +48,9 @@
             <div class="container">
                 <ul>
                     <li><a href="/">HOME</a></li>
-                    {{#if user}}
+                    {{#if user}} {{#if dp}}
                     <li><a href="{{type}}/dashboard">DASHBOARD</a></li>
+                    {{/if}}
                     <li class="pull-right"><a href="/logout">LOGOUT</a></li>
                     {{else}}
                     <li><a href="/dean">COLLEGE LOGIN (Dean Academics)</a></li>
@@ -58,19 +58,12 @@
                     <li><a href="/faculty">FACULTY LOGIN</a></li>
                     <li><a href="/admin">ADMIN LOGIN</a></li>
                     {{/if}}
-                    
+
                 </ul>
             </div>
         </nav>
     </header>
     <div class="body">
-        {{#if success_msg}}
-        <div class="alert alert-success" style="text-align:center;">{{success_msg}}</div>
-        {{/if}} {{#if error_msg}}
-        <div class="alert alert-danger" style="text-align:center;">{{error_msg}}</div>
-        {{/if}} {{#if error}}
-        <div class="alert alert-danger" style="text-align:center;">{{error}}</div>
-        {{/if}}
         {{{body}}}
     </div>
 
@@ -86,13 +79,17 @@
     let body_height = document.body.scrollHeight,
         window_height = $(window).height(),
         footer_height = $('footer').height();
-    console.log(body_height)
-    console.log(window_height)
-    console.log(footer_height)
-
     if ((body_height - window_height) < 0) {
         $('footer').css({ "position": "fixed", "bottom": "0" })
     }
+
+    $(document).ready(function () {
+            $('#dean-form').on('submit', function () {
+                $('input[type=checkbox]:not(:checked)').each(function () {
+                    $(this).attr('checked', true).val('off');
+                });
+            })
+        })
 
 </script>
 

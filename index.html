@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Controls</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <style>
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid;
+            background: white;
+            cursor: pointer;
+        }
+
+        body {
+            font-family: sans-serif;
+            width: 70%;
+            margin: 100px auto;
+        }
+    </style>
+    <h2>Controls</h2>
+    <button class="btn" onclick="pinon()">PinOn</button>
+    <button class="btn" onclick="pinoff()">PinOff</button>
+    <h3 id="fn"></h3>
+    <script>
+        function pinon() {
+            $.ajax({
+                url: 'pinon.php',
+                context: document.body,
+            }).done(function () {
+                document.getElementById('fn').innerHTML = "PinOn"
+            })
+        }
+
+        function pinoff() {
+            
+            $.ajax({
+                url: 'pinoff.php',
+                context: document.body,
+            }).done(function () {
+                document.getElementById('fn').innerHTML = "PinOff"
+            })
+        }
+    </script>
+</body>
+
+</html>

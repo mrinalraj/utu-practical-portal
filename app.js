@@ -3,6 +3,7 @@ const express = require('express'),
     app = express(),
     PORT = process.env.PORT || 5000,
     exphbs = require('express-handlebars'),
+    Handlebars = require('handlebars'),
     expressValidator = require('express-validator'),
     fs = require('fs'),
     path = require('path'),
@@ -11,7 +12,7 @@ const express = require('express'),
     flash = require('connect-flash'),
     session = require('express-session'),
     mongoose = require('mongoose'),
-    MongoStore=require('connect-mongo')(session);
+    MongoStore = require('connect-mongo')(session);
 
 
 const index = require(path.resolve(__dirname, 'routes/index')),
@@ -22,6 +23,9 @@ const index = require(path.resolve(__dirname, 'routes/index')),
 
 mongoose.connect(process.env.MONGODB_LOCAL_URI);
 let db = mongoose.connection;
+
+
+//branch.insertBranch()
 
 const favicon = require('serve-favicon')
 app.use(favicon(path.resolve(__dirname, 'public/img/utu-logo.png')));
@@ -43,12 +47,26 @@ app.use(expressValidator({
     }
 }));
 
+let hbs=exphbs.create({
+    helpers:{
+        ifcond:function(v1,operator,v2,options){
+            return null;
+        },
+        counter:function(index){
+            return (index+1)
+        }
+    }
+})
 app.set('views', path.join(__dirname, 'views'));
 app.engine('handlebars', exphbs({
     defaultLayout: 'layout'
 }));
 app.set('view engine', 'handlebars');
 app.use(express.static(path.resolve(__dirname, 'public')))
+
+Handlebars.registerHelper('xif', (v1, v2, options) => {
+    
+})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -62,7 +80,9 @@ app.use(session({
     cookie: {
         secure: false
     },
-    store: new MongoStore({mongooseConnection:mongoose.connection})
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
 }))
 app.use(flash())
 
@@ -70,8 +90,9 @@ app.use(function (req, res, next) {
     res.locals.success_msg = req.flash('success_msg')
     res.locals.error_msg = req.flash('error_msg')
     res.locals.error = req.flash('error')
-    res.locals.user  = req.session.user || null
+    res.locals.user = req.session.user || null
     res.locals.type = req.session.type || null
+    res.locals.username = req.session.username
     next();
 });
 

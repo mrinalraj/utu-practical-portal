@@ -50,8 +50,16 @@ module.exports.createUser = function (newUser, callback) {
 }
 
 module.exports.getUserByUsername = function(username, callback){
-	var query = {pemail: username};
+	let query = {pemail: username};
 	user.findOne(query, callback);
+}
+
+module.exports.findAllUnverified= function(callback){
+    user.find({verified:false},callback);
+}
+
+module.exports.findAndVerify=function(username, callback){
+    user.findOneAndUpdate({ pemail: username }, { $set: { "verified": true } },callback)
 }
 
 module.exports.getUserById = function(id, callback){

@@ -3,7 +3,11 @@
         <h2 class="page-header">{{intrested}} Registration</h2>
         {{#if errors}} {{#with errors.[0]}}
         <div class="alert alert-danger">{{msg}}</div>
-        {{/with}} {{/if}}
+        {{/with}} {{/if}} {{#if success_msg}}
+        <div class="alert alert-success" style="text-align:center;">{{success_msg}}</div>
+        {{/if}} {{#if error_msg}}
+        <div class="alert alert-danger" style="text-align:center;">{{error_msg}}</div>
+        {{/if}}
         <form method="post" action="/{{action}}">
             <div class="form-group">
                 <label>College Name</label>

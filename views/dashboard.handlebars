@@ -1,0 +1,106 @@
+<div class="body-dashboard">
+    <div class="container">
+        {{#if success_msg}}
+        <div class="alert alert-success" style="text-align:center;">{{success_msg}}</div>
+        {{/if}} {{#if error_msg}}
+        <div class="alert alert-danger" style="text-align:center;">{{error_msg}}</div>
+        {{/if}} {{#ifcond type 'Admin'}}
+        <div class="admin-dashboard">
+            <h2>Hello! Admin.</h2>
+            <br>
+            <br>
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#dean-verification" data-toggle="tab">Dean Verification</a>
+                </li>
+                <li>
+                    <a href="#branch-details" data-toggle="tab">Exam Details</a>
+                </li>
+                <li>
+                    <a href="#allot" data-toggle="tab">Allot faculties</a>
+                </li>
+            </ul>
+
+            <br>
+
+            <div class="tab-content">
+                <div id="dean-verification" class="tab-pane fade in active">
+                    {{#if data}}
+                    <form id="dean-form" action="/admin/dashboard/verify" method="post">
+                        <table class="table">
+                            <thead class="thead-inverse">
+                                <tr>
+                                    <th>College name</th>
+                                    <th>College code</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Verification</th>
+                                </tr>
+                            </thead>
+                            {{#each data}}
+                            <tbody>
+                                <tr>
+                                    <td>{{college_name}}</td>
+                                    <td>{{college_code}}</td>
+                                    <td>{{full_name}}</td>
+                                    <td>{{pemail}}</td>
+                                    <td> 
+                                        <input id="input" type="checkbox" name="ver">
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {{/each}}
+                        </table>
+                        <button class="btn btn-default" onclick="disableinp" type="submit">Submit</button>
+                    </form>
+                    {{else}}
+                    <h1>All sorted here!
+                        <br> Come back later to check for new entries.
+                        <br> or check other sections.</h1>
+                    {{/if}}
+                </div>
+
+                <div id="branch-details" class="tab-pane">
+                    <form action="/admin/addsub" method="post">
+                        <div class="form-group">
+                            <label for="sel1">For Branch</label>
+                            <select class="form-control" id="sel1" name="branch">
+                                <option>Computer Science</option>
+                                <option>Information Technology</option>
+                                <option>Civil Engineering</option>
+                                <option>Mechanical Engineering</option>
+                                <option>Electronics Engineering</option>
+                                <option>Electrical Engineering</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject Codes</label>
+                            <input type="text" class="form-control" placeholder="Enter comma seperated subjects codes" name="sub">
+                        </div>
+                        <button type="submit" class="btn btn-default">Add Subjects</button>
+                    </form>
+                </div>
+
+                <div id="allot" class="tab-pane">
+                    
+                </div>
+            </div>
+            {{/ifcond}} {{#ifcond type 'Faculty'}}
+            <div class="faculty-dashboard">
+                {{username}}
+            </div>
+            {{/ifcond}} {{#ifcond type 'HOD'}}
+            <div class="hod-dashboard">
+                {{username}}
+            </div>
+            {{/ifcond}} {{#ifcond type 'Dean'}}
+            <div class="dean-dashboard">
+                {{username}}
+            </div>
+            {{/ifcond}}
+        </div>
+    </div>
+
+    <script>
+        
+    </script>
