@@ -94,6 +94,6 @@ app.listen(PORT, err => {
         console.log(err)
     } else {
         console.log("\nserver started at %d", PORT)
-        console.log('We are not connected, hooreey!')
+        console.log('We are now connected, hooreey!')
     }
 })

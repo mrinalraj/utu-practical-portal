@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
 // User Schema
-var DeanSchema = mongoose.Schema({
+var HODSchema = mongoose.Schema({
     college_name: {
         type: String
     },
@@ -11,6 +11,12 @@ var DeanSchema = mongoose.Schema({
     },
     full_name: {
         type: String,
+    },
+    branch:{
+        type:String
+    },
+    designation: {
+        type: String
     },
     phone: {
         type: String
@@ -24,9 +30,6 @@ var DeanSchema = mongoose.Schema({
         type: String,
         index: true
     },
-    date_of_joining: {
-        type: String
-    },
     experience: {
         type: String
     },
@@ -38,7 +41,7 @@ var DeanSchema = mongoose.Schema({
     }
 });
 
-var user = module.exports = mongoose.model('dean', DeanSchema);
+var user = module.exports = mongoose.model('faculty', HODSchema);
 
 module.exports.createUser = function (newUser, callback) {
     bcrypt.genSalt(10, function (err, salt) {

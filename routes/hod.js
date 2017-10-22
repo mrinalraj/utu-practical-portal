@@ -2,9 +2,10 @@ let express = require('express'),
     router = express.Router(),
     model = require('../model/hod_model');
 
-
-
 router.get('/', (req, res) => {
+    if(req.session.user){
+        return res.redirect(req.session.type+'/dashboard')
+    }
     res.render('login', {
         title: 'Head of Department Login',
         intrested: 'H.O.D.',
@@ -14,6 +15,9 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
+    if(req.session.user){
+        return res.redirect(req.session.type+'/dashboard')
+    }
     if (req.body) {
         let username = req.body.email,
             password = req.body.pass;
@@ -51,6 +55,9 @@ router.post('/', (req, res) => {
 })
 
 router.get('/register', (req, res) => {
+    if(req.session.user){
+        return res.redirect(req.session.type+'/dashboard')
+    }
     res.render('register', {
         title: 'Head of Department Registration',
         path: '../',
@@ -62,6 +69,9 @@ router.get('/register', (req, res) => {
 })
 
 router.post('/register', (req, res) => {
+    if(req.session.user){
+        return res.redirect(req.session.type+'/dashboard')
+    }
     if (req.body) {
         let reqst = req.body
         let college_name = reqst.clgname,
@@ -141,11 +151,11 @@ router.post('/register', (req, res) => {
                 pemail: email_personal,
                 doj: joining_date,
                 exp: experience,
-                title: 'Dean Registration',
+                title: 'HOD Registration',
                 path: '../',
-                intrested: 'Dean Academics',
+                intrested: 'HOD',
                 date: true,
-                action: 'dean/register'
+                action: 'hod/register'
             })
         } else {
             let new_entry = new model({
@@ -172,6 +182,10 @@ router.post('/register', (req, res) => {
 })
 
 router.get('/dashboard', (req, res) => {
+    if(!req.session.user){
+        req.flash('error_msg','Please login in to acceess Dashboard.')
+        return res.redirect('/hod')
+    }
     res.send('logged in user is ' + req.session.username)
 })
 
