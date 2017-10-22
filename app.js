@@ -17,7 +17,8 @@ const express = require('express'),
 const index = require(path.resolve(__dirname, 'routes/index')),
     dean = require(path.resolve(__dirname, 'routes/dean')),
     faculty = require(path.resolve(__dirname, 'routes/faculty')),
-    hod = require(path.resolve(__dirname, 'routes/hod'));
+    hod = require(path.resolve(__dirname, 'routes/hod')),
+    admin = require(path.resolve(__dirname, 'routes/admin'));
 
 mongoose.connect(process.env.MONGODB_LOCAL_URI);
 let db = mongoose.connection;
@@ -78,15 +79,7 @@ app.use('/', index)
 app.use('/dean', dean)
 app.use('/hod', hod)
 app.use('/faculty', faculty)
-
-app.get('/logout',(req,res)=>{
-    let dest = req.session.type
-    req.session.user=null
-    req.session.username=null
-    req.session.type = null
-    req.flash('success_msg','Successully Logged out')
-    res.redirect(dest)
-})
+app.use('/admin', admin)
 
 
 app.listen(PORT, err => {

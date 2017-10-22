@@ -7,13 +7,13 @@ router.get('/', (req, res) => {
     })
 })
 
-
-router.get('/admin', (req, res) => {
-    
-})
-
-router.post('/admin', (req, res) => {
-
+router.get('/logout',(req,res)=>{
+    let dest = req.session.type
+    req.session.user=null
+    req.session.username=null
+    req.session.type = null
+    req.flash('success_msg','Successully Logged out')
+    res.redirect(dest)
 })
 
 
