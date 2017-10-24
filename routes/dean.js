@@ -1,10 +1,12 @@
 let express = require('express'),
     router = express.Router(),
-    model = require('../model/dean_model');
+    model = require('../model/dean_model'),
+    hod_model = require('../model/hod_model'),
+    fun = require('../lib/functions');
 
 router.get('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     res.render('login', {
         title: 'Dean Academics Login',
@@ -15,8 +17,8 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let username = req.body.email,
@@ -32,9 +34,18 @@ router.post('/', (req, res) => {
                     model.comparePassword(password, user.password, (err, ismatch) => {
                         if (err) throw err;
                         if (ismatch) {
+                            req.session.details = {
+                                "college_name" : user.college_name,
+                                "college_code": user.college_code,
+                                "full_name" : user.full_name,
+                                "phone" : user.phone,
+                                "oemail" : user.oemail,
+                                "pemail" : user.pemail
+                            };
                             req.session.user = username
                             req.session.username = user.full_name
                             req.session.type = 'Dean'
+                            req.session.code = user.college_code
                             req.flash('success_msg', 'Welcome ' + req.session.username)
                             res.redirect('/dean/dashboard')
                         } else {
@@ -55,8 +66,8 @@ router.post('/', (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     res.render('register', {
         title: 'Dean Registration',
@@ -68,8 +79,8 @@ router.get('/register', (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let reqst = req.body
@@ -186,19 +197,74 @@ router.post('/register', (req, res) => {
 
 
 router.get('/dashboard', (req, res) => {
-    if(!req.session.user){
-        req.flash('error_msg','Please login in to acceess Dashboard.')
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/dean')
     }
-    res.render('dashboard', {
-        title: res.locals.type + ' Dashboard',
-        path: '../../',
-        helpers: {
-            ifcond: function (v1, v2, options) {
-                return (v1 === v2) ? options.fn(this) : options.inverse(this);
-            }
+    hod_model.findAllUnverified(req.session.code, function (err, user) {
+        if (user) {
+            res.render('dashboard', {
+                title: res.locals.type + ' Dashboard',
+                path: '../../',
+                data: user,
+                profile : req.session.details,
+                helpers: {
+                    ifcond: function (v1, v2, options) {
+                        return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                    }
+                }
+            })
         }
     })
+})
+
+router.post('/dashboard/verify', (req, res) => {
+    if (req.body) {
+        let verification = req.body.ver,
+            usernames = [];
+        if (verification == undefined || verification == null) {
+            res.redirect('/dean/dashboard')
+        } else {
+            hod_model.findAllUnverified(req.session.code, function (err, user) {
+                if (user) {
+                    for (let i = 0; i < user.length; i++) {
+                        usernames.push(user[i].pemail)
+                        if (typeof verification === "string") {
+                            if (verification === 'on') {
+                                console.log(verification[i])
+                                let email = user[i].pemail,
+                                    name = user[i].full_name;
+                                hod_model.findAndVerify(user[i].pemail, (err, user) => {
+                                    if (err) throw err;
+                                    else {
+                                        console.log('verified')
+                                        fun.sendMail(email, name)
+                                    }
+                                })
+                            }
+                        } else {
+                            if (verification[i] === 'on') {
+                                console.log(verification[i])
+                                let email = user[i].pemail,
+                                    name = user[i].full_name;
+                                hod_model.findAndVerify(user[i].pemail, (err, user) => {
+                                    if (err) throw err;
+                                    else {
+                                        console.log('verified')
+                                        fun.sendMail(email, name)
+                                    }
+                                })
+                            }
+                        }
+                    }
+                    res.redirect('/dean/dashboard')
+                } else {
+                    return null
+                }
+            })
+
+        }
+    }
 })
 
 module.exports = router;

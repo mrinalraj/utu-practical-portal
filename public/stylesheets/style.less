@@ -22,7 +22,6 @@ body {
     .container {
         .well {
             margin: 0 auto;
-            max-width: 500px;
         }
     }
 }
@@ -127,6 +126,9 @@ footer {
 
 .body-login {
     margin: 80px 0;
+    .well {
+        max-width: 500px;
+    }
 }
 
 .body-reg {
@@ -136,20 +138,25 @@ footer {
     }
 }
 
-.body-dashboard{
+.body-dashboard {
     margin: 50px 0;
-    .container{
-        .admin-dashboard{
-            h1{
+    .container {
+        ul {
+            li {
+                a {
+                    font-size: 20px;
+                }
+            }
+        }
+        .admin-dashboard {
+            h1 {
                 margin: 15px 0;
                 line-height: 70px;
             }
-            ul{
-                li{
-                    a{
-                        font-size: 20px;
-                    }
-                }
+        }
+        #profile{
+            span{
+                margin: 0 20px;
             }
         }
     }

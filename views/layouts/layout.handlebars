@@ -26,7 +26,9 @@
     <header>
         <div class="misc">
             <div class="container-fluid">
-                <p class="pull-right">Contact Admin : <a href="mailto:me@mrinalraj.com">me@mrinalraj.com</a></p>
+                <p class="pull-right">Contact Admin :
+                    <a href="mailto:me@mrinalraj.com">me@mrinalraj.com</a>
+                </p>
             </div>
         </div>
 
@@ -47,16 +49,30 @@
         <nav class="">
             <div class="container">
                 <ul>
-                    <li><a href="/">HOME</a></li>
+                    <li>
+                        <a href="/">HOME</a>
+                    </li>
                     {{#if user}} {{#if dp}}
-                    <li><a href="{{type}}/dashboard">DASHBOARD</a></li>
+                    <li>
+                        <a href="{{type}}/dashboard">DASHBOARD</a>
+                    </li>
                     {{/if}}
-                    <li class="pull-right"><a href="/logout">LOGOUT</a></li>
+                    <li class="pull-right">
+                        <a href="/logout">LOGOUT</a>
+                    </li>
                     {{else}}
-                    <li><a href="/dean">COLLEGE LOGIN (Dean Academics)</a></li>
-                    <li><a href="/hod">HODs LOGIN</a></li>
-                    <li><a href="/faculty">FACULTY LOGIN</a></li>
-                    <li><a href="/admin">ADMIN LOGIN</a></li>
+                    <li>
+                        <a href="/dean">COLLEGE LOGIN (Dean Academics)</a>
+                    </li>
+                    <li>
+                        <a href="/hod">HODs LOGIN</a>
+                    </li>
+                    <li>
+                        <a href="/faculty">FACULTY LOGIN</a>
+                    </li>
+                    <li>
+                        <a href="/admin">ADMIN LOGIN</a>
+                    </li>
                     {{/if}}
 
                 </ul>
@@ -84,12 +100,19 @@
     }
 
     $(document).ready(function () {
-            $('#dean-form').on('submit', function () {
-                $('input[type=checkbox]:not(:checked)').each(function () {
-                    $(this).attr('checked', true).val('off');
-                });
-            })
+        $('#verification-form').on('submit', function () {
+            $('input[type=checkbox]:not(:checked)').each(function () {
+                $(this).attr('checked', true).val('off');
+            });
         })
+    })
+    $('.profile-editor').css('display','none')
+    function hideProfile(){
+        $('.profile-header').html('Edit Profile')
+        $('#edit-profile').css('display','none')
+        $('.profile-display').css('display','none')
+        $('.profile-editor').css('display', 'block')
+    }
 
 </script>
 

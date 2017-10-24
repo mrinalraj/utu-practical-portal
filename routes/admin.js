@@ -4,7 +4,7 @@ let express = require('express'),
     hod_model = require('../model/hod_model'),
     faculty_model = require('../model/faculty_model'),
     branch_model = require('../model/createBranch'),
-    fun=require('../lib/functions');
+    fun = require('../lib/functions');
 
 router.get('/', (req, res) => {
     if (req.session.user) {
@@ -72,15 +72,32 @@ router.post('/dashboard/verify', (req, res) => {
                 if (user) {
                     for (let i = 0; i < user.length; i++) {
                         usernames.push(user[i].pemail)
-                        if (verification[i] === 'on') {
-                            let email = user[i].pemail,
-                                name = user[i].full_name;
-                            dean_model.findAndVerify(user[i].pemail, (err, user) => {
-                                if (err) throw err;
-                                else{
-                                    fun.sendMail(email,name)
-                                }
-                            })
+                        if (typeof verification === "string") {
+                            if (verification === 'on') {
+                                console.log(verification[i])
+                                let email = user[i].pemail,
+                                    name = user[i].full_name;
+                                dean_model.findAndVerify(user[i].pemail, (err, user) => {
+                                    if (err) throw err;
+                                    else {
+                                        console.log('verified')
+                                        fun.sendMail(email, name)
+                                    }
+                                })
+                            }
+                        } else {
+                            if (verification[i] === 'on') {
+                                console.log(verification[i])
+                                let email = user[i].pemail,
+                                    name = user[i].full_name;
+                                dean_model.findAndVerify(user[i].pemail, (err, user) => {
+                                    if (err) throw err;
+                                    else {
+                                        console.log('verified')
+                                        fun.sendMail(email, name)
+                                    }
+                                })
+                            }
                         }
                     }
                     res.redirect('/admin/dashboard')
@@ -100,13 +117,12 @@ router.post('/addsub', (req, res) => {
         let subjects = sub.split(',').map(function (item) {
             return item.trim()
         })
-        branch_model.findAndUpdate(branch,sub,(err,reply)=>{
-            if(err) throw err;
-            if(reply){
-                req.flash('success_msg','subjects added')
-            }
-            else{
-                req.flash('error_msg','subjects add failed. please try again')
+        branch_model.findAndUpdate(branch, sub, (err, reply) => {
+            if (err) throw err;
+            if (reply) {
+                req.flash('success_msg', 'subjects added')
+            } else {
+                req.flash('error_msg', 'subjects add failed. please try again')
             }
             res.redirect('/admin/dashboard')
         })
