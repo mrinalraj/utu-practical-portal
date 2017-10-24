@@ -77,30 +77,342 @@
                             <label>Subject Codes</label>
                             <input type="text" class="form-control" placeholder="Enter comma seperated subjects codes" name="sub">
                         </div>
+                        <div class="form-group">
+                            <label>Date of Exam</label>
+                            <input type="text" class="form-control" placeholder="Enter comma seperated dates respective to the subjects in the format ddmm" name="dates">
+                        </div>
                         <button type="submit" class="btn btn-default">Add Subjects</button>
                     </form>
                 </div>
 
                 <div id="allot" class="tab-pane">
-
+                    
                 </div>
             </div>
             {{/ifcond}} {{#ifcond type 'Faculty'}}
             <div class="faculty-dashboard">
-                {{username}}
+                <h2>Hello ! {{details.full_name}}</h2>
+                <br>
+                <br>
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#profile" data-toggle="tab">Profile</a>
+                    </li>
+                    <li>
+                        <a href="#enter-subject" data-toggle="tab">Enter Subjects</a>
+                    </li>
+                </ul>
+                <br>
+                <br>
+                <div class="tab-content">
+                    <div id="profile" class="tab-pane fade in active">
+                        <span>
+                            <h2 class="profile-header">Profile</h2>
+                            <a href="javascript:void(0)" id="edit-profile" onclick="hideProfile()">Edit profile</a>
+                        </span>
+                        <br>
+                        <br>
+                        <h4 class="profile-display">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    Name :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.full_name}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    College Name :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.college_name}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    College Code :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.college_code}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Branch :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.branch}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Designation :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.designation}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Mobile Number :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.phone}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Email Personal :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.pemail}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Email Official :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.oemail}}
+                                </div>
+
+                            </div>
+                        </h4>
+                        <div class="profile-editor">
+                            <form method="post" action="/admin/dashboard/edit">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-control" placeholder="Full Name" name="full_name" value="{{profile.full_name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>College Name</label>
+                                    <input type="text" class="form-control" placeholder="College Name" name="college_name" value="{{profile.college_name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>College Code</label>
+                                    <input type="text" class="form-control" placeholder="College Code" name="college_code" value="{{profile.college_code}}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mobile Number</label>
+                                    <input type="text" class="form-control" placeholder="Mobile Number" name="phone" value="{{profile.phone}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Designation</label>
+                                    <input type="text" class="form-control" placeholder="Designation" name="designation" value="{{profile.designation}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Official Email</label>
+                                    <input type="email" class="form-control" placeholder="Official Email" name="oemail" value="{{profile.oemail}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Personal Email</label>
+                                    <input type="email" class="form-control" placeholder="Personal Email" name="pemail" value="{{profile.pemail}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" name="password">
+                                </div>
+
+                                <button type="submit" class="btn btn-default"> Update </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="enter-subject">
+                        <span>
+                            <h2 class="profile-header">Enter Intrested Subjects</h2>
+                        </span>
+                        <br>
+                        <br>
+                        <form method="post" action="/faculty/updatesubs">
+                            <div class="form-group">
+                                <label>Add Intrested Subjects</label>
+                                <input type="text" class="form-control" placeholder="Comma seperated subject codes" name="subs">
+                            </div>
+                            <button type="submit" class="btn btn-default"> Update </button>
+                        
+                        </form>
+                        <br><br>
+                        <h4>
+                            {{#each profile.subject}}
+                                <p>{{this}}</p>
+                                <br>
+                            {{/each}}
+                        </h4>
+                        <br><br><br><br><br><br><br><br><br><br>
+                    </div>
+                </div>
             </div>
             {{/ifcond}} {{#ifcond type 'HOD'}}
             <div class="hod-dashboard">
-                {{username}}
+                <h2>Hello! {{details.full_name}}.</h2>
+                <br>
+                <br>
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#faculty-verification" data-toggle="tab">Faculty Verification</a>
+                    </li>
+                    <li>
+                        <a href="#profile" data-toggle="tab">Profile</a>
+                    </li>
+                </ul>
+                <br>
+                <br>
+
+                <div class="tab-content">
+                    <div id="faculty-verification" class="tab-pane fade in active">
+                        {{#if data}}
+                        <form id="verification-form" action="/hod/dashboard/verify/faculty" method="post">
+                            <table class="table">
+                                <thead class="thead-inverse">
+                                    <tr>
+                                        <th>College name</th>
+                                        <th>College code</th>
+                                        <th>Name</th>
+                                        <th>Branch</th>
+                                        <th>Email</th>
+                                        <th>Verification</th>
+                                    </tr>
+                                </thead>
+                                {{#each data}}
+                                <tbody>
+                                    <tr>
+                                        <td>{{college_name}}</td>
+                                        <td>{{college_code}}</td>
+                                        <td>{{full_name}}</td>
+                                        <td>{{branch}}</td>
+                                        <td>{{pemail}}</td>
+                                        <td>
+                                            <input id="input" type="checkbox" name="ver">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                {{/each}}
+                            </table>
+                            <button class="btn btn-default" onclick="disableinp" type="submit">Submit</button>
+                        </form>
+                        {{else}}
+                        <h1>All sorted here!
+                            <br> Come back later to check for new entries.
+                            <br> or check other sections.</h1>
+                        {{/if}}
+                    </div>
+                    <div id="profile" class="tab-pane">
+                        <span>
+                            <h2 class="profile-header">Profile</h2>
+                            <a href="javascript:void(0)" id="edit-profile" onclick="hideProfile()">Edit profile</a>
+                        </span>
+                        <br>
+                        <br>
+                        <h4 class="profile-display">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    Name :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.full_name}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    College Name :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.college_name}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    College Code :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.college_code}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Branch :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.branch}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Mobile Number :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.phone}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Email Personal :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.pemail}}
+                                </div>
+                                <br>
+                                <br>
+                                <div class="col-xs-2">
+                                    Email Official :
+                                </div>
+                                <div class="col-xs-10">
+                                    {{profile.oemail}}
+                                </div>
+
+                            </div>
+                        </h4>
+                        <div class="profile-editor">
+                            <form method="post" action="/hod/dashboard/edit">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-control" placeholder="Full Name" name="full_name" value="{{profile.full_name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>College Name</label>
+                                    <input type="text" class="form-control" placeholder="College Name" name="college_name" value="{{profile.college_name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>College Code</label>
+                                    <input type="text" class="form-control" placeholder="College Code" name="college_code" value="{{profile.college_code}}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mobile Number</label>
+                                    <input type="text" class="form-control" placeholder="Mobile Number" name="phone" value="{{profile.phone}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Official Email</label>
+                                    <input type="email" class="form-control" placeholder="Official Email" name="oemail" value="{{profile.oemail}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Personal Email</label>
+                                    <input type="email" class="form-control" placeholder="Personal Email" name="pemail" value="{{profile.pemail}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" name="password">
+                                </div>
+
+                                <button type="submit" class="btn btn-default"> Update </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
             {{/ifcond}} {{#ifcond type 'Dean'}}
             <div class="dean-dashboard">
-                <h2>Hello! {{username}}.</h2>
+                <h2>Hello! {{details.full_name}}.</h2>
                 <br>
                 <br>
                 <ul class="nav nav-tabs">
                     <li class="active">
                         <a href="#hod-verification" data-toggle="tab">HOD Verification</a>
+                    </li>
+                    <li>
+                        <a href="#faculty-verification" data-toggle="tab">Faculty Verification</a>
                     </li>
                     <li>
                         <a href="#profile" data-toggle="tab">Profile</a>
@@ -112,7 +424,7 @@
                 <div class="tab-content">
                     <div id="hod-verification" class="tab-pane fade in active">
                         {{#if data}}
-                        <form id="verification-form" action="/dean/dashboard/verify" method="post">
+                        <form id="verification-form" action="/dean/dashboard/verify/hod" method="post">
                             <table class="table">
                                 <thead class="thead-inverse">
                                     <tr>
@@ -209,41 +521,78 @@
                             <form method="post" action="/dean/dashboard/edit">
                                 <div class="form-group">
                                     <label>Full Name</label>
-                                    <input type="text" class="form-control" placeholder="Full Name" name="name" value={{profile.full_name}}>
+                                    <input type="text" class="form-control" placeholder="Full Name" name="full_name" value="{{profile.full_name}}">
                                 </div>
                                 <div class="form-group">
                                     <label>College Name</label>
-                                    <input type="text" class="form-control" placeholder="College Name" name="clgname" value={{profile.college_name}}>
+                                    <input type="text" class="form-control" placeholder="College Name" name="college_name" value="{{profile.college_name}}">
                                 </div>
                                 <div class="form-group">
                                     <label>College Code</label>
-                                    <input type="text" class="form-control" placeholder="College Code" name="clgcode" value={{profile.college_code}}>
+                                    <input type="text" class="form-control" placeholder="College Code" name="college_code" value="{{profile.college_code}}">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Mobile Number</label>
-                                    <input type="text" class="form-control" placeholder="Mobile Number" name="phone" value={{profile.phone}}>
+                                    <input type="text" class="form-control" placeholder="Mobile Number" name="phone" value="{{profile.phone}}">
                                 </div>
                                 <div class="form-group">
                                     <label>Official Email</label>
-                                    <input type="email" class="form-control" placeholder="Official Email" name="oemail" value={{profile.oemail}}>
+                                    <input type="email" class="form-control" placeholder="Official Email" name="oemail" value="{{profile.oemail}}">
                                 </div>
                                 <div class="form-group">
                                     <label>Personal Email</label>
-                                    <input type="email" class="form-control" placeholder="Personal Email" name="pemail" value={{profile.pemail}}>
+                                    <input type="email" class="form-control" placeholder="Personal Email" name="pemail" value="{{profile.pemail}}">
                                 </div>
                                 <div class="form-group">
                                     <label>Current Password</label>
                                     <input type="password" class="form-control" placeholder="Password" name="password">
                                 </div>
-                                
+
                                 <button type="submit" class="btn btn-default"> Update </button>
                             </form>
                         </div>
                     </div>
+                    <div id="faculty-verification" class="tab-pane fade in">
+                        {{#if datafaculty}}
+                        <form id="verification-form" action="/dean/dashboard/verify/faculty" method="post">
+                            <table class="table">
+                                <thead class="thead-inverse">
+                                    <tr>
+                                        <th>College name</th>
+                                        <th>College code</th>
+                                        <th>Name</th>
+                                        <th>Branch</th>
+                                        <th>Email</th>
+                                        <th>Verification</th>
+                                    </tr>
+                                </thead>
+                                {{#each datafaculty}}
+                                <tbody>
+                                    <tr>
+                                        <td>{{college_name}}</td>
+                                        <td>{{college_code}}</td>
+                                        <td>{{full_name}}</td>
+                                        <td>{{branch}}</td>
+                                        <td>{{pemail}}</td>
+                                        <td>
+                                            <input id="input" type="checkbox" name="ver">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                {{/each}}
+                            </table>
+                            <button class="btn btn-default" onclick="disableinp" type="submit">Submit</button>
+                        </form>
+                        {{else}}
+                        <h1>All sorted here!
+                            <br> Come back later to check for new entries.
+                            <br> or check other sections.</h1>
+                        {{/if}}
+                    </div>
                 </div>
-                {{/ifcond}}
             </div>
+            {{/ifcond}}
         </div>
     </div>
 </div>

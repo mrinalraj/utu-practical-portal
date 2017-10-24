@@ -1,6 +1,7 @@
 let express = require('express'),
     router = express.Router(),
-    branch = require('../model/createBranch');
+    model = require('../model/models'),
+    library=require('../lib/library');
 
 router.get('/', (req, res) => {
     createBranches()
@@ -20,10 +21,10 @@ function createBranches() {
         "Electrical Engineering"
     ]
     for (let i = 0; i < branches.length; i++) {
-        let ent = new branch({
+        let ent = new model.createBranch({
             branchName: branches[i]
         })
-        branch.insertBranch(ent, (err, entry) => {
+        model.createBranch.insertBranch(ent, (err, entry) => {
             if (err) {}
         })
     }
@@ -36,6 +37,10 @@ router.get('/logout', (req, res) => {
     req.session.type = null
     req.flash('success_msg', 'Successully Logged out')
     res.redirect(dest)
+})
+
+router.get('/addDist', (req, res) => {
+    library.allotFaculty.addColleges()
 })
 
 module.exports = router;

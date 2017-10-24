@@ -1,37 +1,48 @@
 let express = require('express'),
-    router = express.Router()
-    model = require('../model/faculty_model');
+    router = express.Router(),
+    model = require('../model/models');
 
 router.get('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
-    res.render('login',{
-        title :'Faculty Login',
+    res.render('login', {
+        title: 'Faculty Login',
         intrested: 'Faculty',
-        path : '../',
+        path: '../',
         reg: '/faculty/register'
     })
 })
 
 router.post('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let username = req.body.email,
             password = req.body.pass;
 
-        model.getUserByUsername(username, function (err, user) {
+        model.faculty.getUserByUsername(username, function (err, user) {
             if (err) throw err;
             if (!user) {
                 req.flash('error_msg', 'User Not found');
                 res.redirect('/faculty')
             } else {
-                if (user.verified === true) {
-                    model.comparePassword(password, user.password, (err, ismatch) => {
+                if (user.verified1 === true && user.verified2 === true) {
+                    model.faculty.comparePassword(password, user.password, (err, ismatch) => {
                         if (err) throw err;
                         if (ismatch) {
+                            req.session.details = {
+                                "college_name": user.college_name,
+                                "college_code": user.college_code,
+                                "full_name": user.full_name,
+                                "branch": user.branch,
+                                "designation": user.designation,
+                                "subject": user.subject,
+                                "phone": user.phone,
+                                "oemail": user.oemail,
+                                "pemail": user.pemail
+                            };
                             req.session.user = username
                             req.session.username = user.full_name
                             req.session.type = 'Faculty'
@@ -55,30 +66,30 @@ router.post('/', (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     res.render('register', {
         title: 'Faculty Registration',
         path: '../',
         intrested: 'Faculty',
-        desi :true,
+        desi: true,
         branchreq: true,
-        action:'faculty/register'
+        action: 'faculty/register'
     })
 })
 
 router.post('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let reqst = req.body
         let college_name = reqst.clgname,
             college_code = reqst.clgcode,
             full_name = reqst.name,
-            branch=reqst.branch,
-            des=reqst.des,
+            branch = reqst.branch,
+            des = reqst.des,
             phone = reqst.phone,
             email_official = reqst.oemail,
             email_personal = reqst.pemail,
@@ -158,43 +169,94 @@ router.post('/register', (req, res) => {
                 action: 'faculty/register'
             })
         } else {
-            let new_entry = new model({
+            let new_entry = new model.faculty({
                 college_name: college_name,
                 college_code: college_code,
                 full_name: full_name,
-                branch:branch,
-                designation:des,
+                branch: branch,
+                designation: des,
                 phone: phone,
                 pemail: email_personal,
                 oemail: email_official,
                 experience: experience,
                 password: password,
-                verified: false
+                verified1: false,
+                verified2: false
             })
 
-            model.createUser(new_entry, (err, model) => {
-                if (err) throw err;
-                req.flash('success_msg', 'You are now registered, and can Log In once the admin has approved.')
-                res.redirect('/faculty')
+            model.faculty.createUser(new_entry, (err, model) => {
+                if (err) {
+                    if (err.code === 11000) {
+                        req.flash('error_msg', 'You seem to have already been registered, Please Login to go to the dashboard, or register with a new email.')
+                        res.redirect('/faculty/register')
+                    } else {
+                        req.flash('error_msg', 'some error occured, please try again')
+                        res.redirect('/faculty/register')
+                    }
+                } else {
+                    req.flash('success_msg', 'You are now registered, and can Log In once the admin has approved.')
+                    res.redirect('/faculty')
+                }
             })
         }
     }
 })
 
 router.get('/dashboard', (req, res) => {
-    if(!req.session.user){
-        req.flash('error_msg','Please login in to acceess Dashboard.')
-        return res.redirect('/admin')
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/faculty')
     }
     res.render('dashboard', {
         title: res.locals.type + ' Dashboard',
         path: '../../',
+        profile: req.session.details,
         helpers: {
             ifcond: function (v1, v2, options) {
                 return (v1 === v2) ? options.fn(this) : options.inverse(this);
             }
         }
     })
+})
+
+router.post('/updatesubs', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/faculty')
+    }
+    if (req.body) {
+        let subs = req.body.subs,
+            subjects = subs.split(',').map(function (data) {
+                return data.trim()
+            })
+        Array.prototype.remove = function () {
+            let what, a = arguments,
+                L = a.length,
+                ax;
+            while (L && this.length) {
+                what = a[--L];
+                while ((ax = this.indexOf(what)) !== -1) {
+                    this.splice(ax, 1);
+                }
+            }
+            return this;
+        }
+
+        model.faculty.addOrUpdateSubjects(req.session.details.pemail, subjects, (err, user) => {
+            if (err) return res.send(err);
+            if (user) {
+                model.faculty.getUserByUsername(req.session.details.pemail, (err, user) => {
+                    if (err) return res.send(err);
+                    if (user) {
+                        req.session.details.subject = user.subject
+                        req.flash('success_msg', "subjects Added")
+                        res.redirect('/faculty/dashboard')
+                    }
+                })
+
+            }
+        })
+    }
 })
 
 

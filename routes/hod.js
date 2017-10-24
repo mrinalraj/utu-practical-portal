@@ -1,10 +1,10 @@
 let express = require('express'),
     router = express.Router(),
-    model = require('../model/hod_model');
+    model = require('../model/models');
 
 router.get('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     res.render('login', {
         title: 'Head of Department Login',
@@ -15,23 +15,32 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let username = req.body.email,
             password = req.body.pass;
 
-        model.getUserByUsername(username, function (err, user) {
+        model.hod.getUserByUsername(username, function (err, user) {
             if (err) throw err;
             if (!user) {
                 req.flash('error_msg', 'User Not found');
                 res.redirect('/hod')
             } else {
                 if (user.verified === true) {
-                    model.comparePassword(password, user.password, (err, ismatch) => {
+                    model.hod.comparePassword(password, user.password, (err, ismatch) => {
                         if (err) throw err;
                         if (ismatch) {
+                            req.session.details = {
+                                "college_name": user.college_name,
+                                "college_code": user.college_code,
+                                "full_name": user.full_name,
+                                "branch": user.branch,
+                                "phone": user.phone,
+                                "oemail": user.oemail,
+                                "pemail": user.pemail
+                            };
                             req.session.user = username
                             req.session.username = user.full_name
                             req.session.type = 'HOD'
@@ -55,8 +64,8 @@ router.post('/', (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     res.render('register', {
         title: 'Head of Department Registration',
@@ -69,15 +78,15 @@ router.get('/register', (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-    if(req.session.user){
-        return res.redirect('/'+req.session.type+'/dashboard')
+    if (req.session.user) {
+        return res.redirect('/' + req.session.type + '/dashboard')
     }
     if (req.body) {
         let reqst = req.body
         let college_name = reqst.clgname,
             college_code = reqst.clgcode,
             full_name = reqst.name,
-            branch=reqst.branch,
+            branch = reqst.branch,
             phone = reqst.phone,
             email_official = reqst.oemail,
             email_personal = reqst.pemail,
@@ -158,11 +167,11 @@ router.post('/register', (req, res) => {
                 action: 'hod/register'
             })
         } else {
-            let new_entry = new model({
+            let new_entry = new model.hod({
                 college_name: college_name,
                 college_code: college_code,
                 full_name: full_name,
-                branch:branch,
+                branch: branch,
                 phone: phone,
                 pemail: email_personal,
                 oemail: email_official,
@@ -172,29 +181,87 @@ router.post('/register', (req, res) => {
                 verified: false
             })
 
-            model.createUser(new_entry, (err, model) => {
-                if (err) throw err;
-                req.flash('success_msg', 'You are now registered, and can Log In once the admin has approved.')
-                res.redirect('/hod')
+            model.hod.createUser(new_entry, (err, model) => {
+                if (err) {
+                    if (err.code === 11000) {
+                        req.flash('error_msg', 'You seem to have already been registered, Please Login to go to the dashboard, or register with a new email.')
+                        res.redirect('/hod/register')
+                    } else {
+                        req.flash('error_msg', 'some error occured, please try again')
+                        res.redirect('/hod/register')
+                    }
+                } else {
+                    req.flash('success_msg', 'You are now registered, and can Log In once the admin has approved.')
+                    res.redirect('/hod')
+                }
             })
         }
     }
 })
 
 router.get('/dashboard', (req, res) => {
-    if(!req.session.user){
-        req.flash('error_msg','Please login in to acceess Dashboard.')
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/hod')
     }
-    res.render('dashboard', {
-        title: res.locals.type + ' Dashboard',
-        path: '../../',
-        helpers: {
-            ifcond: function (v1, v2, options) {
-                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+    if (req.session.type == "hod")
+        model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.code, function (err, user) {
+            if (user) {
+                res.render('dashboard', {
+                    title: res.locals.type + ' Dashboard',
+                    path: '../../',
+                    data: user,
+                    profile: req.session.details,
+                    helpers: {
+                        ifcond: function (v1, v2, options) {
+                            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                        }
+                    }
+                })
             }
-        }
-    })
+        })
+
 })
+
+router.post('/dashboard/verify/faculty', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        res.status(501)
+        return res.redirect('/hod')
+    }
+    if (req.body) {
+        let verification = req.body.ver,
+            usernames = [];
+        if (verification == undefined || verification == null) {
+            res.redirect('/hod/dashboard')
+        } else {
+            model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.code, function (err, user) {
+                if (user) {
+                    for (let i = 0; i < user.length; i++) {
+                        usernames.push(user[i].pemail)
+                        if (verification[i] === 'on' || verification === 'on') {
+                            console.log(verification[i])
+                            let email = user[i].pemail,
+                                name = user[i].full_name;
+                            model.faculty.findAndVerifyOne(user[i].pemail, (err, user) => {
+                                if (err) throw err;
+                                else {
+                                    console.log('verified')
+                                }
+                            })
+                        }
+
+                    }
+                    res.redirect('/hod/dashboard')
+                } else {
+                    return null
+                }
+            })
+
+        }
+    }
+})
+
+
 
 module.exports = router;

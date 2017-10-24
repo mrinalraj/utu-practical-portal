@@ -93,6 +93,7 @@ app.use(function (req, res, next) {
     res.locals.user = req.session.user || null
     res.locals.type = req.session.type || null
     res.locals.username = req.session.username
+    res.locals.details = req.session.details
     next();
 });
 

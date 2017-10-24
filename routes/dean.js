@@ -1,10 +1,10 @@
 let express = require('express'),
     router = express.Router(),
-    model = require('../model/dean_model'),
-    hod_model = require('../model/hod_model'),
-    fun = require('../lib/functions');
+    model = require('../model/models'),
+    library = require('../lib/library');
 
 router.get('/', (req, res) => {
+
     if (req.session.user) {
         return res.redirect('/' + req.session.type + '/dashboard')
     }
@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
         path: '../',
         reg: '/dean/register'
     })
+
 })
 
 router.post('/', (req, res) => {
@@ -24,23 +25,23 @@ router.post('/', (req, res) => {
         let username = req.body.email,
             password = req.body.pass;
 
-        model.getUserByUsername(username, function (err, user) {
+        model.dean.getUserByUsername(username, function (err, user) {
             if (err) throw err;
             if (!user) {
                 req.flash('error_msg', 'User Not found');
                 res.redirect('/dean')
             } else {
                 if (user.verified === true) {
-                    model.comparePassword(password, user.password, (err, ismatch) => {
+                    model.dean.comparePassword(password, user.password, (err, ismatch) => {
                         if (err) throw err;
                         if (ismatch) {
                             req.session.details = {
-                                "college_name" : user.college_name,
+                                "college_name": user.college_name,
                                 "college_code": user.college_code,
-                                "full_name" : user.full_name,
-                                "phone" : user.phone,
-                                "oemail" : user.oemail,
-                                "pemail" : user.pemail
+                                "full_name": user.full_name,
+                                "phone": user.phone,
+                                "oemail": user.oemail,
+                                "pemail": user.pemail
                             };
                             req.session.user = username
                             req.session.username = user.full_name
@@ -164,7 +165,7 @@ router.post('/register', (req, res) => {
                 action: 'dean/register'
             })
         } else {
-            let new_entry = new model({
+            let new_entry = new model.dean({
                 college_name: college_name,
                 college_code: college_code,
                 full_name: full_name,
@@ -177,7 +178,7 @@ router.post('/register', (req, res) => {
                 verified: false
             })
 
-            model.createUser(new_entry, (err, model) => {
+            model.dean.createUser(new_entry, (err, model) => {
                 if (err) {
                     if (err.code === 11000) {
                         req.flash('error_msg', 'You seem to have already been registered, Please Login to go to the dashboard, or register with a new email.')
@@ -201,61 +202,56 @@ router.get('/dashboard', (req, res) => {
         req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/dean')
     }
-    hod_model.findAllUnverified(req.session.code, function (err, user) {
+    model.hod.findAllUnverified(req.session.code, function (err, user) {
         if (user) {
-            res.render('dashboard', {
-                title: res.locals.type + ' Dashboard',
-                path: '../../',
-                data: user,
-                profile : req.session.details,
-                helpers: {
-                    ifcond: function (v1, v2, options) {
-                        return (v1 === v2) ? options.fn(this) : options.inverse(this);
-                    }
+            model.faculty.findAllUnverifiedSecond(req.session.code, function (err, user2) {
+                if (user) {
+                    res.render('dashboard', {
+                        title: res.locals.type + ' Dashboard',
+                        path: '../../',
+                        data: user,
+                        datafaculty: user2,
+                        profile: req.session.details,
+                        helpers: {
+                            ifcond: function (v1, v2, options) {
+                                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                            }
+                        }
+                    })
                 }
             })
         }
     })
 })
 
-router.post('/dashboard/verify', (req, res) => {
+router.post('/dashboard/verify/hod', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/dean')
+    }
     if (req.body) {
         let verification = req.body.ver,
             usernames = [];
         if (verification == undefined || verification == null) {
             res.redirect('/dean/dashboard')
         } else {
-            hod_model.findAllUnverified(req.session.code, function (err, user) {
+            model.hod.findAllUnverified(req.session.code, function (err, user) {
                 if (user) {
                     for (let i = 0; i < user.length; i++) {
                         usernames.push(user[i].pemail)
-                        if (typeof verification === "string") {
-                            if (verification === 'on') {
-                                console.log(verification[i])
-                                let email = user[i].pemail,
-                                    name = user[i].full_name;
-                                hod_model.findAndVerify(user[i].pemail, (err, user) => {
-                                    if (err) throw err;
-                                    else {
-                                        console.log('verified')
-                                        fun.sendMail(email, name)
-                                    }
-                                })
-                            }
-                        } else {
-                            if (verification[i] === 'on') {
-                                console.log(verification[i])
-                                let email = user[i].pemail,
-                                    name = user[i].full_name;
-                                hod_model.findAndVerify(user[i].pemail, (err, user) => {
-                                    if (err) throw err;
-                                    else {
-                                        console.log('verified')
-                                        fun.sendMail(email, name)
-                                    }
-                                })
-                            }
+                        if (verification[i] === 'on' || verification === 'on') {
+
+                            let email = user[i].pemail,
+                                name = user[i].full_name;
+                            model.hod.findAndVerify(user[i].pemail, (err, user) => {
+                                if (err) throw err;
+                                else {
+
+                                    sendMail.sendMail(email, name)
+                                }
+                            })
                         }
+
                     }
                     res.redirect('/dean/dashboard')
                 } else {
@@ -264,6 +260,76 @@ router.post('/dashboard/verify', (req, res) => {
             })
 
         }
+    }
+})
+
+router.post('/dashboard/verify/faculty', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        res.status(501)
+        return res.redirect('/dean')
+    }
+    if (req.body) {
+        let verification = req.body.ver,
+            usernames = [];
+        if (verification == undefined || verification == null) {
+            res.redirect('/dean/dashboard')
+        } else {
+            model.faculty.findAllUnverifiedSecond(req.session.code, function (err, user) {
+                if (user) {
+                    for (let i = 0; i < user.length; i++) {
+                        usernames.push(user[i].pemail)
+                        if (verification[i] === 'on' || verification === 'on') {
+
+                            let email = user[i].pemail,
+                                name = user[i].full_name;
+                            model.faculty.findAndVerifyTwo(user[i].pemail, (err, user) => {
+                                if (err) throw err;
+                                else {
+                                    library.sendMail.sendMail(email, name)
+                                }
+                            })
+                        }
+
+                    }
+                    res.redirect('/dean/dashboard')
+                } else {
+                    return null
+                }
+            })
+
+        }
+    }
+})
+
+router.post('/dashboard/edit', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/dean')
+    }
+    if (req.body) {
+        model.dean.getUserByUsername(req.session.user, function (err, user) {
+            if (err) throw err;
+            if (user) {
+                model.dean.comparePassword(req.body.password, user.password, function (err, isMatch) {
+                    if (isMatch) {
+                        model.dean.editProfile(user.pemail, req.body, (err, user) => {
+                            if (err) return res.status(404).send("404")
+                            req.session.details = {
+                                "college_name": req.body.college_name,
+                                "college_code": req.body.college_code,
+                                "full_name": req.body.full_name,
+                                "phone": req.body.phone,
+                                "oemail": req.body.oemail,
+                                "pemail": req.body.pemail
+                            };
+                            req.flash('success_msg', 'Profile Updated.')
+                            res.redirect('/dean/dashboard')
+                        })
+                    }
+                })
+            }
+        })
     }
 })
 

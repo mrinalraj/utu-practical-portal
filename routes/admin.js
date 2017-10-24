@@ -1,10 +1,7 @@
 let express = require('express'),
     router = express.Router(),
-    dean_model = require('../model/dean_model'),
-    hod_model = require('../model/hod_model'),
-    faculty_model = require('../model/faculty_model'),
-    branch_model = require('../model/createBranch'),
-    fun = require('../lib/functions');
+    models=require('../model/models'),
+    library = require('../lib/library');
 
 router.get('/', (req, res) => {
     if (req.session.user) {
@@ -44,7 +41,7 @@ router.get('/dashboard', (req, res) => {
         req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/admin')
     }
-    dean_model.findAllUnverified(function (err, user) {
+    models.dean.findAllUnverified(function (err, user) {
         if (user) {
             res.render('dashboard', {
                 title: res.locals.type + ' Dashboard',
@@ -68,37 +65,23 @@ router.post('/dashboard/verify', (req, res) => {
         if (verification == undefined || verification == null) {
             res.redirect('/admin/dashboard')
         } else {
-            dean_model.findAllUnverified(function (err, user) {
+            models.dean.findAllUnverified(function (err, user) {
                 if (user) {
                     for (let i = 0; i < user.length; i++) {
                         usernames.push(user[i].pemail)
-                        if (typeof verification === "string") {
-                            if (verification === 'on') {
-                                console.log(verification[i])
-                                let email = user[i].pemail,
-                                    name = user[i].full_name;
-                                dean_model.findAndVerify(user[i].pemail, (err, user) => {
-                                    if (err) throw err;
-                                    else {
-                                        console.log('verified')
-                                        fun.sendMail(email, name)
-                                    }
-                                })
-                            }
-                        } else {
-                            if (verification[i] === 'on') {
-                                console.log(verification[i])
-                                let email = user[i].pemail,
-                                    name = user[i].full_name;
-                                dean_model.findAndVerify(user[i].pemail, (err, user) => {
-                                    if (err) throw err;
-                                    else {
-                                        console.log('verified')
-                                        fun.sendMail(email, name)
-                                    }
-                                })
-                            }
+                        if (verification === 'on' || verification === 'on') {
+                            console.log(verification[i])
+                            let email = user[i].pemail,
+                                name = user[i].full_name;
+                            models.dean.findAndVerify(user[i].pemail, (err, user) => {
+                                if (err) throw err;
+                                else {
+                                    console.log('verified')
+                                    library.sendMail.sendMail(email, name)
+                                }
+                            })
                         }
+
                     }
                     res.redirect('/admin/dashboard')
                 } else {
@@ -113,11 +96,15 @@ router.post('/dashboard/verify', (req, res) => {
 router.post('/addsub', (req, res) => {
     if (req.body) {
         let branch = req.body.branch,
-            sub = req.body.sub;
+            sub = req.body.sub,
+            date = req.body.dates;
         let subjects = sub.split(',').map(function (item) {
             return item.trim()
         })
-        branch_model.findAndUpdate(branch, sub, (err, reply) => {
+        date=date.split(',').map(function(data){
+            return data.trim()
+        })
+        models.createBranch.findAndUpdate(branch, subjects, date, (err, reply) => {
             if (err) throw err;
             if (reply) {
                 req.flash('success_msg', 'subjects added')
