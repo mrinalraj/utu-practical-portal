@@ -262,6 +262,41 @@ router.post('/dashboard/verify/faculty', (req, res) => {
     }
 })
 
+router.post('/dashboard/edit', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/hod')
+    }
+    if (req.body) {
+        model.hod.getUserByUsername(req.session.user, function (err, user) {
+            if (err) throw err;
+            if (user) {
+                model.hod.comparePassword(req.body.password, user.password, function (err, isMatch) {
+                    if (isMatch) {
+                        model.hod.editProfile(user.pemail, req.body, (err, user) => {
+                            if (err) return res.status(404).send("404")
+                            req.session.details = {
+                                "college_name": req.body.college_name,
+                                "college_code": req.body.college_code,
+                                "full_name": req.body.full_name,
+                                "branch": req.body.branch,
+                                "phone": req.body.phone,
+                                "oemail": req.body.oemail,
+                                "pemail": req.body.pemail
+                            };
+                            req.flash('success_msg', 'Profile Updated.')
+                            res.redirect('/hod/dashboard')
+                        })
+                    }
+                    else{
+                        req.flash('error_msg','Password Incorrect')
+                        res.redirect('/hod/dashboard')
+                    }
+                })
+            }
+        })
+    }
+})
 
 
 module.exports = router;

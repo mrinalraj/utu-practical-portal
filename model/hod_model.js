@@ -86,3 +86,18 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
         callback(null, isMatch);
     });
 }
+
+module.exports.editProfile = function (username, data, callback) {
+    user.findOneAndUpdate({
+        pemail: username
+    }, {
+            $set: {
+                full_name: data.full_name,
+                college_name: data.college_name,
+                college_code: data.college_code,
+                phone: data.phone,
+                oemail: data.oemail,
+                pemail: data.pemail
+            }
+        }, callback)
+}

@@ -327,6 +327,10 @@ router.post('/dashboard/edit', (req, res) => {
                             res.redirect('/dean/dashboard')
                         })
                     }
+                    else {
+                        req.flash('error_msg', 'Password Incorrect')
+                        res.redirect('/dean/dashboard')
+                    }
                 })
             }
         })

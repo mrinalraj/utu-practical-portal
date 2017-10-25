@@ -120,6 +120,22 @@ module.exports.addOrUpdateSubjects = function (username, subjects, callback) {
     })
 }
 
+module.exports.editProfile = function (username, data, callback) {
+    user.findOneAndUpdate({
+        pemail: username
+    }, {
+            $set: {
+                full_name: data.full_name,
+                college_name: data.college_name,
+                college_code: data.college_code,
+                phone: data.phone,
+                designation: data.designation,
+                oemail: data.oemail,
+                pemail: data.pemail
+            }
+        }, callback)
+}
+
 module.exports.comparePassword = function (candidatePassword, hash, callback) {
     bcrypt.compare(candidatePassword, hash, function (err, isMatch) {
         if (err) throw err;
