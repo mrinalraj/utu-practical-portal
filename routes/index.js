@@ -40,8 +40,8 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/addDist', (req, res) => {
-    //library.allotFaculty.addColleges()
-    library.allotFaculty.internalExaminer()
+    //library.allotFaculty.internalExaminer()
+    library.allotFaculty.externalExaminer()
 })
 
 module.exports = router;

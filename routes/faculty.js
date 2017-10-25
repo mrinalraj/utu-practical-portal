@@ -297,5 +297,31 @@ router.post('/updatesubs', (req, res) => {
     }
 })
 
+router.post('/feedback/:type', (req,res)=>{
+    if (!req.session.user) {
+        req.flash('error_msg', 'Please login in to acceess Dashboard.')
+        return res.redirect('/faculty')
+    }
+    if(req.body){
+        if(req.params['type'] === 'int'){
+            model.faculty.update({pemail: req.session.details.pemail},{$push:{feedbackInternal:req.body}},(err,result)=>{
+                if(err) return res.send(err)
+                req.flash('success_msg','Feedback sent')
+                res.redirect('/faculty/dashboard')
+            })
+        }
+        else if(req.params['type'] == 'ext'){
+
+            model.faculty.update({ pemail: req.session.details.pemail }, { $push: { feedbackExternal: req.body } }, (err, result) => {
+                if (err) return res.send(err)
+                req.flash('success_msg', 'Feedback sent')
+                res.redirect('/faculty/dashboard')
+            })
+        }
+        else{
+            res.status(400).send('Bad Reqst. router data insufficiant')
+        }
+    }
+})
 
 module.exports = router;

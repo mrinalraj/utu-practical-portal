@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
 // User Schema
-var HODSchema = mongoose.Schema({
+var FacultySchema = mongoose.Schema({
     college_name: {
         type: String
     },
@@ -44,10 +44,16 @@ var HODSchema = mongoose.Schema({
     },
     subject: {
         type: Array
+    },
+    feedbackInternal: {
+        type: Object
+    },
+    feedbackExternal: {
+        type: Object
     }
 });
 
-var user = module.exports = mongoose.model('faculty', HODSchema);
+var user = module.exports = mongoose.model('faculty', FacultySchema);
 
 module.exports.createUser = function (newUser, callback) {
     bcrypt.genSalt(10, function (err, salt) {
@@ -108,7 +114,7 @@ module.exports.addOrUpdateSubjects = function (username, subjects, callback) {
         pemail: username
     }, (err, user1) => {
         if (user1) {
-            let entry=subjects.concat(user1.subject)
+            let entry = subjects.concat(user1.subject)
             user.findOneAndUpdate({
                 pemail: username
             }, {
@@ -124,16 +130,16 @@ module.exports.editProfile = function (username, data, callback) {
     user.findOneAndUpdate({
         pemail: username
     }, {
-            $set: {
-                full_name: data.full_name,
-                college_name: data.college_name,
-                college_code: data.college_code,
-                phone: data.phone,
-                designation: data.designation,
-                oemail: data.oemail,
-                pemail: data.pemail
-            }
-        }, callback)
+        $set: {
+            full_name: data.full_name,
+            college_name: data.college_name,
+            college_code: data.college_code,
+            phone: data.phone,
+            designation: data.designation,
+            oemail: data.oemail,
+            pemail: data.pemail
+        }
+    }, callback)
 }
 
 module.exports.comparePassword = function (candidatePassword, hash, callback) {
