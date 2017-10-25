@@ -1,9 +1,11 @@
 let mongoose = require('mongoose');
 
-var InternalAllotmentSchema = mongoose.Schema({
+let InternalAllotmentSchema = mongoose.Schema({
+    college_code: {
+        type: String
+    },
     subject: {
-        type: String,
-        unique: true
+        type: String
     },
     facultyName: {
         type: String
@@ -13,9 +15,26 @@ var InternalAllotmentSchema = mongoose.Schema({
     }
 });
 
-let internal = module.exports = mongoose.model('internalAllottment', InternalAllotmentSchema)
+let ExternalSchema = mongoose.Schema({
+    college_code: {
+        type: String
+    },
+    subject: {
+        type: String
+    },
+    facultyName: {
+        type: String
+    },
+    pemail: {
+        type: String
+    }
+})
 
-module.exports.allot = function (newEntry, callback) {
-    newEntry.save(callback)
+
+let internal = module.exports.internal = mongoose.model('internalAllottment', InternalAllotmentSchema)
+
+module.exports.internalSubjects = function (code, callback) {
+    internal.find({
+        college_code: code
+    }, callback)
 }
-

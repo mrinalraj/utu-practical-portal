@@ -237,6 +237,7 @@ router.post('/dashboard/edit', (req, res) => {
                                 "college_code": req.body.college_code,
                                 "full_name": req.body.full_name,
                                 "branch": user.branch,
+                                "subject":user.subject,
                                 "designation": req.body.designation,
                                 "phone": req.body.phone,
                                 "oemail": req.body.oemail,
