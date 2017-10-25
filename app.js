@@ -47,13 +47,13 @@ app.use(expressValidator({
     }
 }));
 
-let hbs=exphbs.create({
-    helpers:{
-        ifcond:function(v1,operator,v2,options){
+let hbs = exphbs.create({
+    helpers: {
+        ifcond: function (v1, operator, v2, options) {
             return null;
         },
-        counter:function(index){
-            return (index+1)
+        counter: function (index) {
+            return (index + 1)
         }
     }
 })
@@ -65,7 +65,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(path.resolve(__dirname, 'public')))
 
 Handlebars.registerHelper('xif', (v1, v2, options) => {
-    
+
 })
 
 app.use(bodyParser.json());

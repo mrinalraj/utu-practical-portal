@@ -204,8 +204,8 @@ router.get('/dashboard', (req, res) => {
         req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/hod')
     }
-    if (req.session.type == "hod")
-        model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.code, function (err, user) {
+    if (req.session.type == "hod".toUpperCase())
+        model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.details.college_code, function (err, user) {
             if (user) {
                 res.render('dashboard', {
                     title: res.locals.type + ' Dashboard',
@@ -235,7 +235,7 @@ router.post('/dashboard/verify/faculty', (req, res) => {
         if (verification == undefined || verification == null) {
             res.redirect('/hod/dashboard')
         } else {
-            model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.code, function (err, user) {
+            model.faculty.findAllUnverifiedFirst(req.session.details.branch, req.session.details.college_code, function (err, user) {
                 if (user) {
                     for (let i = 0; i < user.length; i++) {
                         usernames.push(user[i].pemail)
@@ -247,12 +247,12 @@ router.post('/dashboard/verify/faculty', (req, res) => {
                                 if (err) throw err;
                                 else {
                                     console.log('verified')
+                                    res.redirect('/hod/dashboard')
                                 }
                             })
                         }
 
                     }
-                    res.redirect('/hod/dashboard')
                 } else {
                     return null
                 }
