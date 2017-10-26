@@ -117,4 +117,22 @@ router.post('/addsub', (req, res) => {
 })
 
 
+router.post('/dashboard/assign', (req, res) => {
+    if (!req.session.user) {
+        req.flash('error_msg', 'You dont have proper rightss')
+        res.status(501)
+        return res.redirect('/admin')
+    }
+    if (req.body) {
+        library.allotFaculty.internalExaminer().then(() => {
+            library.allotFaculty.externalExaminer().then(() => {
+                req.flash('success_msg', 'Faculty assignment successful')
+                res.status(200).redirect('/admin/dashboard')
+            })
+        })
+    }
+})
+
+
+
 module.exports = router;

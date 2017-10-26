@@ -35,13 +35,10 @@ router.get('/logout', (req, res) => {
     req.session.user = null
     req.session.username = null
     req.session.type = null
+    req.session.details = null
     req.flash('success_msg', 'Successully Logged out')
     res.redirect(dest)
 })
 
-router.get('/addDist', (req, res) => {
-    library.allotFaculty.internalExaminer()
-    library.allotFaculty.externalExaminer()
-})
 
 module.exports = router;

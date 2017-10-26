@@ -1,6 +1,7 @@
 let express = require('express'),
     router = express.Router(),
-    model = require('../model/models');
+    model = require('../model/models'),
+    library = require('../lib/library');
 
 router.get('/', (req, res) => {
     if (req.session.user) {
@@ -237,7 +238,7 @@ router.post('/dashboard/edit', (req, res) => {
                                 "college_code": req.body.college_code,
                                 "full_name": req.body.full_name,
                                 "branch": user.branch,
-                                "subject":user.subject,
+                                "subject": user.subject,
                                 "designation": req.body.designation,
                                 "phone": req.body.phone,
                                 "oemail": req.body.oemail,
@@ -246,8 +247,7 @@ router.post('/dashboard/edit', (req, res) => {
                             req.flash('success_msg', 'Profile Updated.')
                             res.redirect('/faculty/dashboard')
                         })
-                    }
-                    else {
+                    } else {
                         req.flash('error_msg', 'Password Incorrect')
                         res.redirect('/faculty/dashboard')
                     }
@@ -297,28 +297,38 @@ router.post('/updatesubs', (req, res) => {
     }
 })
 
-router.post('/feedback/:type', (req,res)=>{
+router.post('/feedback/:type', (req, res) => {
     if (!req.session.user) {
         req.flash('error_msg', 'Please login in to acceess Dashboard.')
         return res.redirect('/faculty')
     }
-    if(req.body){
-        if(req.params['type'] === 'int'){
-            model.faculty.update({pemail: req.session.details.pemail},{$push:{feedbackInternal:req.body}},(err,result)=>{
-                if(err) return res.send(err)
-                req.flash('success_msg','Feedback sent')
-                res.redirect('/faculty/dashboard')
-            })
-        }
-        else if(req.params['type'] == 'ext'){
-
-            model.faculty.update({ pemail: req.session.details.pemail }, { $push: { feedbackExternal: req.body } }, (err, result) => {
+    if (req.body) {
+        if (req.params['type'] === 'int') {
+            model.faculty.update({
+                pemail: req.session.details.pemail
+            }, {
+                $push: {
+                    feedbackInternal: req.body
+                }
+            }, (err, result) => {
                 if (err) return res.send(err)
                 req.flash('success_msg', 'Feedback sent')
                 res.redirect('/faculty/dashboard')
             })
-        }
-        else{
+        } else if (req.params['type'] == 'ext') {
+
+            model.faculty.update({
+                pemail: req.session.details.pemail
+            }, {
+                $push: {
+                    feedbackExternal: req.body
+                }
+            }, (err, result) => {
+                if (err) return res.send(err)
+                req.flash('success_msg', 'Feedback sent')
+                res.redirect('/faculty/dashboard')
+            })
+        } else {
             res.status(400).send('Bad Reqst. router data insufficiant')
         }
     }
