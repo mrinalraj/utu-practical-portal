@@ -40,7 +40,7 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/addDist', (req, res) => {
-    //library.allotFaculty.internalExaminer()
+    library.allotFaculty.internalExaminer()
     library.allotFaculty.externalExaminer()
 })
 
